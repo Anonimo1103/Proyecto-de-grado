@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Gestión Académica</title>
+
+
+<style>
+
+*{
+    box-sizing:border-box;
+}
+
+
+body{
+
+    margin:0;
+    font-family:'Segoe UI',Arial,sans-serif;
+    background:#eef3f8;
+
+}
+
+
+/* LOGIN */
+
+.login{
+
+    width:360px;
+    margin:80px auto;
+    background:white;
+    padding:30px;
+
+    border-radius:15px;
+
+    box-shadow:0 8px 20px rgba(0,0,0,.15);
+
+}
+
+
+.login h1{
+
+    text-align:center;
+    color:#0d6efd;
+
+}
+
+
+.login p{
+
+    text-align:center;
+    color:#666;
+
+}
+
+
+
+/* CAMPOS */
+
+input,
+select,
+textarea{
+
+    width:100%;
+
+    padding:12px;
+
+    margin:8px 0 15px;
+
+    border:1px solid #ccc;
+
+    border-radius:8px;
+
+    font-size:15px;
+
+}
+
+
+
+/* BOTONES */
+
+button{
+
+    width:100%;
+
+    padding:12px;
+
+    background:#0d6efd;
+
+    color:white;
+
+    border:none;
+
+    border-radius:8px;
+
+    cursor:pointer;
+
+    font-size:15px;
+
+}
+
+
+button:hover{
+
+    background:#084298;
+
+}
+
+
+
+/* SISTEMA */
+
+
+#sistema{
+
+    display:none;
+
+}
+
+
+
+/* CABECERA */
+
+
+header{
+
+    background:linear-gradient(90deg,#0d6efd,#084298);
+
+    color:white;
+
+    text-align:center;
+
+    padding:30px;
+
+}
+
+
+
+/* CONTENEDOR */
+
+
+.container{
+
+    width:90%;
+
+    max-width:1100px;
+
+    margin:auto;
+
+    padding:25px;
+
+}
+
+
+
+.card{
+
+    background:white;
+
+    padding:25px;
+
+    margin-bottom:25px;
+
+    border-radius:15px;
+
+    box-shadow:0 5px 15px rgba(0,0,0,.1);
+
+}
+
+
+
+h2{
+
+    color:#0d6efd;
+
+}
+
+
+
+/* TABLA */
+
+
+table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+}
+
+
+
+th{
+
+    background:#0d6efd;
+
+    color:white;
+
+    padding:12px;
+
+}
+
+
+
+td{
+
+    border:1px solid #ddd;
+
+    padding:12px;
+
+    text-align:center;
+
+}
+
+
+
+tr:hover{
+
+    background:#f5f9ff;
+
+}
+
+
+
+/* ESTADOS */
+
+
+.pendiente{
+
+    color:#dc3545;
+
+    font-weight:bold;
+
+}
+
+
+
+/* BOTON ELIMINAR */
+
+
+.eliminar{
+
+    background:#dc3545;
+
+    width:auto;
+
+    padding:8px 15px;
+
+}
+
+
+.eliminar:hover{
+
+    background:#a71d2a;
+
+}
+
+
+
+/* DESCRIPCION */
+
+
+small{
+
+    color:#666;
+
+}
+
+
+
+/* FOOTER */
+
+
+footer{
+
+    background:#212529;
+
+    color:white;
+
+    text-align:center;
+
+    padding:15px;
+
+}
+
+
+
+/* CELULARES */
+
+
+@media(max-width:600px){
+
+    .login{
+
+        width:90%;
+
+    }
+
+
+    table{
+
+        font-size:12px;
+
+    }
+
+
+}
+
+
+
+</style>
+
+
+</head>
+
+
+<body>
+
+
+
+<!-- LOGIN -->
+
+
+<div class="login" id="login">
+
+
+<h1>
+📚 Gestión Académica
+</h1>
+
+
+<p>
+Plataforma de actividades estudiantiles
+</p>
+
+
+
+<label>
+Correo electrónico
+</label>
+
+
+<input type="email"
+placeholder="correo@ejemplo.com">
+
+
+
+<label>
+Contraseña
+</label>
+
+
+<input type="password"
+placeholder="Contraseña">
+
+
+
+<button onclick="entrar()">
+
+Ingresar
+
+</button>
+
+
+</div>
+
+
+
+
+
+<!-- SISTEMA -->
+
+
+<div id="sistema">
+
+
+<header>
+
+<h1>
+📚 Sistema de Gestión Académica
+</h1>
+
+
+<p>
+Registro y control de actividades
+</p>
+
+
+</header>
+
+
+
+<div class="container">
+
+
+
+<!-- FORMULARIO -->
+
+
+<div class="card">
+
+
+<h2>
+➕ Agregar actividad
+</h2>
+
+
+
+<label>
+Nombre de la actividad
+</label>
+
+
+<input id="nombre"
+type="text"
+placeholder="Ejemplo: Proyecto Final">
+
+
+
+<label>
+Asignatura
+</label>
+
+
+<select id="asignatura">
+
+<option>Ingeniería de Software</option>
+
+<option>Base de Datos</option>
+
+<option>Redes</option>
+
+<option>Matemáticas</option>
+
+</select>
+
+
+
+<label>
+Fecha límite
+</label>
+
+
+<input id="fecha"
+type="date">
+
+
+
+<label>
+Descripción
+</label>
+
+
+<textarea id="descripcion"
+rows="4"
+placeholder="Detalles de la actividad">
+</textarea>
+
+
+
+<button onclick="agregarActividad()">
+
+Agregar actividad
+
+</button>
+
+
+
+</div>
+
+<!-- TABLA DE ACTIVIDADES -->
+
+<div class="card">
+
+<h2>
+📝 Actividades registradas
+</h2>
+
+
+<table id="tablaActividades">
+
+
+<tr>
+
+<th>
+Actividad
+</th>
+
+<th>
+Asignatura
+</th>
+
+<th>
+Fecha
+</th>
+
+<th>
+Estado
+</th>
+
+<th>
+Acción
+</th>
+
+
+</tr>
+
+
+
+<tr>
+
+<td>
+Proyecto Web
+</td>
+
+<td>
+Ingeniería de Software
+</td>
+
+<td>
+20/11/2026
+</td>
+
+<td class="pendiente">
+Pendiente
+</td>
+
+<td>
+
+<button class="eliminar" onclick="eliminarActividad(this)">
+Eliminar
+</button>
+
+</td>
+
+</tr>
+
+
+</table>
+
+
+</div>
+
+
+
+
+
+<!-- INFORMACIÓN -->
+
+<div class="card">
+
+
+<h2>
+📊 Seguimiento académico
+</h2>
+
+
+<p>
+Actividades registradas:
+<strong id="contador">
+1
+</strong>
+</p>
+
+
+<p>
+Estado:
+<strong>
+Organizado
+</strong>
+</p>
+
+
+</div>
+
+
+
+</div>
+
+
+
+<footer>
+
+Proyecto: Plataforma Web para Gestión de Tareas Académicas
+
+</footer>
+
+
+
+</div>
+
+
+
+
+
+
+<script>
+
+
+// LOGIN
+
+function entrar(){
+
+    document.getElementById("login").style.display="none";
+
+    document.getElementById("sistema").style.display="block";
+
+}
+
+
+
+
+
+// AGREGAR ACTIVIDAD
+
+function agregarActividad(){
+
+
+    let nombre = document.getElementById("nombre").value;
+
+    let asignatura = document.getElementById("asignatura").value;
+
+    let fecha = document.getElementById("fecha").value;
+
+    let descripcion = document.getElementById("descripcion").value;
+
+
+
+    if(nombre === "" || fecha === ""){
+
+        alert("Complete el nombre y la fecha");
+
+        return;
+
+    }
+
+
+
+    let tabla = document.getElementById("tablaActividades");
+
+    let fila = tabla.insertRow();
+
+
+
+    fila.innerHTML = `
+
+
+    <td>
+
+    ${nombre}
+
+    <br>
+
+    <small>${descripcion}</small>
+
+    </td>
+
+
+
+    <td>
+
+    ${asignatura}
+
+    </td>
+
+
+
+    <td>
+
+    ${fecha}
+
+    </td>
+
+
+
+    <td class="pendiente">
+
+    Pendiente
+
+    </td>
+
+
+
+    <td>
+
+    <button class="eliminar" onclick="eliminarActividad(this)">
+
+    Eliminar
+
+    </button>
+
+    </td>
+
+
+    `;
+
+
+
+    actualizarContador();
+
+
+
+    limpiarFormulario();
+
+
+}
+
+
+
+
+// ELIMINAR ACTIVIDAD
+
+function eliminarActividad(boton){
+
+
+    let fila = boton.parentNode.parentNode;
+
+
+    fila.remove();
+
+
+    actualizarContador();
+
+
+}
+
+
+
+
+// LIMPIAR FORMULARIO
+
+function limpiarFormulario(){
+
+
+    document.getElementById("nombre").value="";
+
+    document.getElementById("fecha").value="";
+
+    document.getElementById("descripcion").value="";
+
+
+}
+
+
+
+
+// CONTADOR
+
+function actualizarContador(){
+
+
+    let tabla = document.getElementById("tablaActividades");
+
+
+    let cantidad = tabla.rows.length - 1;
+
+
+    document.getElementById("contador").innerHTML = cantidad;
+
+
+}
+
+
+</script>
+
+
+
+</body>
+
+</html>
