@@ -8,51 +8,64 @@
         * { box-sizing: border-box; }
         body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: #eef3f8; }
         
-        /* CABECERA */
         header { background: linear-gradient(90deg, #0d6efd, #084298); color: white; text-align: center; padding: 30px; }
         
-        /* CONTENEDOR Y TARJETAS */
         .container { width: 90%; max-width: 1100px; margin: auto; padding: 25px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         .card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,.1); }
-        .full-width { grid-column: 1 / -1; } /* Para que ocupe todo el ancho */
+        .full-width { grid-column: 1 / -1; }
         h2 { color: #0d6efd; border-bottom: 2px solid #eef3f8; padding-bottom: 10px; margin-top: 0;}
         
-        /* CAMPOS Y BOTONES */
         input, select, textarea { width: 100%; padding: 12px; margin: 8px 0 15px; border: 1px solid #ccc; border-radius: 8px; font-size: 14px; }
         button { width: auto; padding: 10px 15px; background: #0d6efd; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; margin-right: 5px; }
         button:hover { background: #084298; }
-        .btn-completar { background: #198754; }
-        .btn-completar:hover { background: #146c43; }
         .btn-eliminar { background: #dc3545; }
         .btn-eliminar:hover { background: #a71d2a; }
         .btn-volver { background: #6c757d; display: block; width: 100%; text-align: center; margin-top: 20px;}
         
-        /* TABLA */
         table { width: 100%; border-collapse: collapse; margin-top: 15px; }
         th { background: #0d6efd; color: white; padding: 12px; text-align: left; }
-        td { border: 1px solid #ddd; padding: 12px; font-size: 14px;}
+        td { border: 1px solid #ddd; padding: 12px; font-size: 14px; vertical-align: middle; }
         tr:hover { background: #f5f9ff; }
         
         /* ESTADOS */
         .pendiente { color: #dc3545; font-weight: bold; }
+        .progreso { color: #fd7e14; font-weight: bold; }
         .completada { color: #198754; font-weight: bold; }
         small { color: #666; }
         progress { width: 100%; height: 25px; accent-color: #198754; border-radius: 5px; }
+
+        /* RANGO / SLIDER */
+        .slider-container { display: flex; align-items: center; gap: 10px; }
+        input[type=range] { width: 100%; margin: 0; accent-color: #0d6efd; cursor: pointer; }
 
         /* CALENDARIO CSS */
         .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .calendar-header button { background: #6c757d; padding: 5px 15px; font-size: 18px;}
         .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; text-align: center; }
         .day-name { font-weight: bold; background: #0d6efd; color: white; padding: 8px; border-radius: 5px; font-size: 14px;}
-        .day { padding: 15px 5px; background: #f8f9fa; border-radius: 5px; border: 1px solid #ddd; min-height: 60px; display: flex; flex-direction: column; align-items: center; font-size: 14px;}
+        
+        .day { position: relative; padding: 15px 5px; background: #f8f9fa; border-radius: 5px; border: 1px solid #ddd; min-height: 60px; display: flex; flex-direction: column; align-items: center; font-size: 14px; transition: 0.2s;}
         .day.empty { background: transparent; border: none; }
-        .day.today { background: #cfe2ff; border: 2px solid #0d6efd; font-weight: bold; }
-        .day.has-task { background: #d1e7dd; border-color: #198754; font-weight: bold;}
-        .task-dot { height: 8px; width: 8px; background-color: #dc3545; border-radius: 50%; margin-top: 5px; }
+        .day.today { border: 3px solid #0d6efd; font-weight: bold; box-shadow: inset 0 0 5px rgba(13,110,253,0.3); }
         
-        /* FOOTER */
+        /* SEMAFORIZACIÓN DÍAS */
+        .semaforo-rojo { background-color: #f8d7da; border-color: #dc3545; }
+        .semaforo-amarillo { background-color: #fff3cd; border-color: #ffc107; }
+        .semaforo-verde { background-color: #d1e7dd; border-color: #198754; }
+
+        /* PUNTOS DINÁMICOS */
+        .dot-container { display: flex; gap: 2px; flex-wrap: wrap; justify-content: center; margin-top: 5px; }
+        .task-dot { height: 10px; width: 10px; border-radius: 50%; box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+        .dot-pendiente { background-color: #dc3545; }
+        .dot-progreso { background-color: #fd7e14; }
+        .dot-completada { background-color: #198754; }
+
+        /* TOOLTIP HOVER (CAJA DE INFORMACIÓN) */
+        .tooltip { display: none; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); background: rgba(33, 37, 41, 0.95); color: white; padding: 8px 12px; border-radius: 6px; z-index: 10; white-space: nowrap; font-size: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); pointer-events: none; text-align: left; line-height: 1.4;}
+        .day:hover .tooltip { display: block; }
+        .tooltip::after { content: ""; position: absolute; top: 100%; left: 50%; margin-left: -5px; border-width: 5px; border-style: solid; border-color: rgba(33, 37, 41, 0.95) transparent transparent transparent; }
+
         footer { background: #212529; color: white; text-align: center; padding: 15px; margin-top: 20px; }
-        
         @media(max-width: 768px) { .container { grid-template-columns: 1fr; width: 95%; padding: 10px; } }
     </style>
 </head>
@@ -64,30 +77,34 @@
     </header>
 
     <div class="container">
-
-        <!-- ANALÍTICA DEL APRENDIZAJE -->
+        <!-- ANALÍTICA -->
         <div class="card full-width">
             <h2>📊 Mi Rendimiento Académico</h2>
-            <p>Progreso de tareas completadas:</p>
+            <p>Progreso global de entregas:</p>
             <progress id="barraProgreso" value="0" max="100"></progress>
             <p style="text-align: right; margin-top: 5px;"><strong id="porcentajeTexto">0%</strong></p>
             <p>
                 Total Asignadas: <strong id="totalTareas">0</strong> | 
                 Completadas: <strong id="tareasCompletadas" class="completada">0</strong> | 
+                En Progreso: <strong id="tareasProgreso" class="progreso">0</strong> |
                 Pendientes: <strong id="tareasPendientes" class="pendiente">0</strong>
             </p>
         </div>
 
-        <!-- FORMULARIO DE INGRESO -->
+        <!-- FORMULARIO -->
         <div class="card">
             <h2>➕ Planificar Actividad</h2>
             <label>Nombre de la tarea</label>
-            <input id="nombre" type="text" placeholder="Ejemplo: Ensayo de bases de datos">
+            <input id="nombre" type="text" placeholder="Ejemplo: Modelado de BD">
 
             <label>Asignatura</label>
             <select id="asignatura">
                 <option>Ingeniería de Software</option>
-                <option>Base de Datos</option>
+                <option>Estructuras de Datos</option>
+                <option>Bases de Datos</option>
+                <option>Programación Orientada a Objetos</option>
+                <option>Arquitectura de Computadores</option>
+                <option>Física General</option>
                 <option>Diseño Web</option>
                 <option>Cálculo Integral</option>
             </select>
@@ -114,7 +131,7 @@
             </div>
         </div>
 
-        <!-- TABLA DE GESTIÓN -->
+        <!-- TABLA CON SLIDER -->
         <div class="card full-width">
             <h2>📝 Mis Actividades Registradas</h2>
             <table id="tablaActividades">
@@ -123,6 +140,7 @@
                         <th>Actividad</th>
                         <th>Asignatura</th>
                         <th>Fecha Límite</th>
+                        <th>Avance</th>
                         <th>Estado</th>
                         <th>Acciones</th>
                     </tr>
@@ -145,11 +163,9 @@
     </footer>
 
     <script>
-        // Memoria central del sistema (Arreglo de tareas)
         let tareas = [];
         let fechaActual = new Date();
 
-        // 1. FUNCIÓN PARA AGREGAR TAREAS
         function agregarActividad() {
             let nombre = document.getElementById("nombre").value;
             let asignatura = document.getElementById("asignatura").value;
@@ -161,9 +177,9 @@
                 return;
             }
 
-            // Guardar tarea con un ID único
             let idUnico = Date.now();
-            tareas.push({ id: idUnico, nombre: nombre, asignatura: asignatura, fecha: fecha, descripcion: descripcion, estado: 'Pendiente' });
+            // Nueva propiedad "porcentaje" inicializada en 0
+            tareas.push({ id: idUnico, nombre: nombre, asignatura: asignatura, fecha: fecha, descripcion: descripcion, porcentaje: 0, estado: 'Pendiente' });
 
             document.getElementById("nombre").value = "";
             document.getElementById("fecha").value = "";
@@ -172,63 +188,81 @@
             actualizarTodoElSistema();
         }
 
-        // 2. FUNCIÓN PARA MARCAR COMO COMPLETADA
-        function marcarCompletada(id) {
+        // Se ejecuta cada vez que el estudiante mueve el slider
+        function cambiarPorcentaje(id, valor) {
             let tareaBuscada = tareas.find(t => t.id === id);
             if(tareaBuscada) {
-                tareaBuscada.estado = 'Completada';
+                tareaBuscada.porcentaje = parseInt(valor);
+                
+                // Actualizar estado basado en el porcentaje
+                if(tareaBuscada.porcentaje === 0) {
+                    tareaBuscada.estado = 'Pendiente';
+                } else if(tareaBuscada.porcentaje === 100) {
+                    tareaBuscada.estado = 'Completada';
+                } else {
+                    tareaBuscada.estado = 'En Progreso';
+                }
             }
             actualizarTodoElSistema();
         }
 
-        // 3. FUNCIÓN PARA ELIMINAR TAREA
         function eliminarActividad(id) {
             tareas = tareas.filter(t => t.id !== id);
             actualizarTodoElSistema();
         }
 
-        // 4. FUNCIÓN CENTRAL QUE ACTUALIZA TABLA Y MÉTRICAS
         function actualizarTodoElSistema() {
             let tbody = document.querySelector("#tablaActividades tbody");
-            tbody.innerHTML = ""; // Limpiar tabla
+            tbody.innerHTML = ""; 
             
             let completadas = 0;
+            let enProgreso = 0;
+            let sumaPorcentajes = 0;
 
             tareas.forEach(tarea => {
                 if(tarea.estado === 'Completada') completadas++;
+                else if(tarea.estado === 'En Progreso') enProgreso++;
+                
+                sumaPorcentajes += tarea.porcentaje;
+
+                let claseEstado = '';
+                if(tarea.estado === 'Pendiente') claseEstado = 'pendiente';
+                else if(tarea.estado === 'En Progreso') claseEstado = 'progreso';
+                else claseEstado = 'completada';
 
                 let fila = tbody.insertRow();
                 fila.innerHTML = `
                     <td><strong>${tarea.nombre}</strong><br><small>${tarea.descripcion}</small></td>
                     <td>${tarea.asignatura}</td>
                     <td>${tarea.fecha}</td>
-                    <td class="${tarea.estado === 'Pendiente' ? 'pendiente' : 'completada'}">${tarea.estado}</td>
-                    <td>
-                        ${tarea.estado === 'Pendiente' ? `<button class="btn-completar" onclick="marcarCompletada(${tarea.id})">✔</button>` : ''}
-                        <button class="btn-eliminar" onclick="eliminarActividad(${tarea.id})">🗑</button>
+                    <td style="min-width: 150px;">
+                        <div class="slider-container">
+                            <input type="range" min="0" max="100" value="${tarea.porcentaje}" oninput="cambiarPorcentaje(${tarea.id}, this.value)">
+                            <span style="font-weight: bold; width: 40px; text-align: right;">${tarea.porcentaje}%</span>
+                        </div>
                     </td>
+                    <td class="${claseEstado}">${tarea.estado}</td>
+                    <td><button class="btn-eliminar" onclick="eliminarActividad(${tarea.id})">🗑</button></td>
                 `;
             });
 
-            // Actualizar métricas visuales
             let total = tareas.length;
-            let pendientes = total - completadas;
-            let porcentaje = total === 0 ? 0 : Math.round((completadas / total) * 100);
+            let pendientes = total - completadas - enProgreso;
+            let promedioGlobal = total === 0 ? 0 : Math.round(sumaPorcentajes / total);
 
             document.getElementById("totalTareas").innerText = total;
             document.getElementById("tareasCompletadas").innerText = completadas;
+            document.getElementById("tareasProgreso").innerText = enProgreso;
             document.getElementById("tareasPendientes").innerText = pendientes;
-            document.getElementById("barraProgreso").value = porcentaje;
-            document.getElementById("porcentajeTexto").innerText = porcentaje + "%";
+            document.getElementById("barraProgreso").value = promedioGlobal;
+            document.getElementById("porcentajeTexto").innerText = promedioGlobal + "%";
 
-            // Refrescar calendario para que aparezcan los puntos de entrega
             renderizarCalendario();
         }
 
-        // 5. FUNCIONES DEL CALENDARIO
         function renderizarCalendario() {
             const grid = document.getElementById("calendarioGrid");
-            grid.innerHTML = ""; // Limpiar calendario
+            grid.innerHTML = ""; 
 
             const meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
             const anio = fechaActual.getFullYear();
@@ -236,7 +270,6 @@
             
             document.getElementById("mesAnioTexto").innerText = `${meses[mes]} ${anio}`;
 
-            // Días de la semana
             const diasSemana = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
             diasSemana.forEach(dia => {
                 let div = document.createElement("div");
@@ -245,56 +278,93 @@
                 grid.appendChild(div);
             });
 
-            // Cálculos de fechas
             const primerDiaMes = new Date(anio, mes, 1).getDay();
             const totalDiasMes = new Date(anio, mes + 1, 0).getDate();
-            const hoy = new Date(); // Fecha real de hoy
+            const hoyReal = new Date(); 
+            hoyReal.setHours(0,0,0,0); // Limpiar horas para cálculo exacto
 
-            // Rellenar espacios vacíos al inicio del mes
             for (let i = 0; i < primerDiaMes; i++) {
                 let div = document.createElement("div");
                 div.className = "day empty";
                 grid.appendChild(div);
             }
 
-            // Rellenar los días del mes
             for (let i = 1; i <= totalDiasMes; i++) {
                 let div = document.createElement("div");
                 div.className = "day";
                 div.innerText = i;
 
-                // Destacar si es el día de hoy
-                if(i === hoy.getDate() && mes === hoy.getMonth() && anio === hoy.getFullYear()) {
-                    div.classList.add("today");
-                }
+                let esHoy = (i === hoyReal.getDate() && mes === hoyReal.getMonth() && anio === hoyReal.getFullYear());
+                if(esHoy) div.classList.add("today");
 
-                // Buscar si hay tareas en esta fecha
                 let mesString = (mes + 1).toString().padStart(2, '0');
                 let diaString = i.toString().padStart(2, '0');
-                let fechaFormateada = `${anio}-${mesString}-${diaString}`; // Formato: YYYY-MM-DD
+                let fechaCeldaTxt = `${anio}-${mesString}-${diaString}`;
+                let fechaCeldaDate = new Date(fechaCeldaTxt + 'T00:00:00'); // Tratar zona horaria
 
-                let tieneTarea = tareas.some(t => t.fecha === fechaFormateada);
+                // Filtrar tareas que caen en este día
+                let tareasDelDia = tareas.filter(t => t.fecha === fechaCeldaTxt);
                 
-                if(tieneTarea) {
-                    div.classList.add("has-task");
-                    let punto = document.createElement("div");
-                    punto.className = "task-dot";
-                    div.appendChild(punto);
+                if(tareasDelDia.length > 0) {
+                    // Contenedor para múltiples puntitos si hay más de una tarea
+                    let dotContainer = document.createElement("div");
+                    dotContainer.className = "dot-container";
+
+                    // Crear el Tooltip (Caja de texto al pasar el ratón)
+                    let tooltipInfo = "";
+                    
+                    tareasDelDia.forEach(t => {
+                        let dot = document.createElement("div");
+                        dot.className = "task-dot";
+                        
+                        // Color del punto según estado
+                        if(t.estado === 'Pendiente') dot.classList.add("dot-pendiente");
+                        else if(t.estado === 'En Progreso') dot.classList.add("dot-progreso");
+                        else dot.classList.add("dot-completada");
+                        
+                        dotContainer.appendChild(dot);
+
+                        // Agregar info al tooltip
+                        tooltipInfo += `<strong>${t.asignatura}</strong><br>${t.nombre} - <em>${t.estado} (${t.porcentaje}%)</em><br><br>`;
+                    });
+
+                    div.appendChild(dotContainer);
+
+                    let tooltip = document.createElement("div");
+                    tooltip.className = "tooltip";
+                    tooltip.innerHTML = tooltipInfo.slice(0, -8); // Quitar los últimos <br>
+                    div.appendChild(tooltip);
+
+                    // LÓGICA DE SEMAFORIZACIÓN (Calculamos con la tarea que falte menos días y no esté completada)
+                    let diasParaEntrega = (fechaCeldaDate.getTime() - hoyReal.getTime()) / (1000 * 3600 * 24);
+                    
+                    // Solo pintar el fondo si hay alguna tarea sin completar
+                    let faltaTerminar = tareasDelDia.some(t => t.estado !== 'Completada');
+                    
+                    if (faltaTerminar) {
+                        if (diasParaEntrega <= 3) {
+                            div.classList.add("semaforo-rojo");
+                        } else if (diasParaEntrega <= 5) {
+                            div.classList.add("semaforo-amarillo");
+                        } else {
+                            div.classList.add("semaforo-verde");
+                        }
+                    } else {
+                        // Si todas están al 100%, queda verde seguro.
+                        div.classList.add("semaforo-verde");
+                    }
                 }
 
                 grid.appendChild(div);
             }
         }
 
-        // Navegar entre meses
         function cambiarMes(direccion) {
             fechaActual.setMonth(fechaActual.getMonth() + direccion);
             renderizarCalendario();
         }
 
-        // Iniciar el calendario al abrir la página
         renderizarCalendario();
-
     </script>
 </body>
 </html>
