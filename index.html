@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Gestión Académica</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: #eef3f8; }
+        
+        /* CONTENEDOR LOGIN */
+        .login { width: 360px; margin: 80px auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 8px 20px rgba(0,0,0,.15); }
+        .login h1 { text-align: center; color: #0d6efd; font-size: 24px; margin-bottom: 5px; }
+        .login p { text-align: center; color: #666; margin-bottom: 25px; margin-top: 0; }
+        
+        /* SELECTOR DE ROL */
+        .role-selector { display: flex; gap: 10px; margin-bottom: 20px; }
+        .btn-role { flex: 1; padding: 10px; background: #f8f9fa; color: #333; border: 1px solid #ccc; border-radius: 8px; cursor: pointer; font-size: 14px; transition: 0.3s; }
+        .btn-role:hover { background: #e9ecef; }
+        .btn-role.active { background: #0d6efd; color: white; border-color: #0d6efd; }
+        
+        /* CAMPOS DE TEXTO */
+        label { font-size: 14px; font-weight: bold; color: #333; }
+        input { width: 100%; padding: 12px; margin: 8px 0 20px; border: 1px solid #ccc; border-radius: 8px; font-size: 15px; }
+        
+        /* BOTON INGRESAR */
+        .btn-ingresar { width: 100%; padding: 12px; background: #0d6efd; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: bold; transition: 0.3s; }
+        .btn-ingresar:hover { background: #084298; }
+        
+        /* MENSAJE DE ERROR */
+        .alerta { color: #dc3545; font-size: 13px; text-align: center; margin-top: 15px; display: none; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="login">
+        <h1>📚 Gestión Académica</h1>
+        <p>Acceso a la plataforma</p>
+
+        <!-- BOTONES DE AUTOCOMPLETADO (DATOS DE PRUEBA) -->
+        <div class="role-selector">
+            <button class="btn-role" id="btnEstudiante" onclick="autocompletar('estudiante')">👨‍🎓 Estudiante</button>
+            <button class="btn-role" id="btnDocente" onclick="autocompletar('docente')">👨‍🏫 Docente</button>
+        </div>
+
+        <label>Correo electrónico</label>
+        <input type="email" id="correo" placeholder="correo@ejemplo.com">
+
+        <label>Contraseña</label>
+        <input type="password" id="password" placeholder="Contraseña">
+
+        <button class="btn-ingresar" onclick="entrar()">Ingresar</button>
+        
+        <!-- TEXTO DE ALERTA OCULTO POR DEFECTO -->
+        <p id="mensajeError" class="alerta">Credenciales incorrectas.</p>
+    </div>
+
+    <script>
+        // FUNCIÓN PARA AUTOCOMPLETAR LOS DATOS SEGÚN EL ROL
+        function autocompletar(rol) {
+            // Reiniciar estilos de los botones
+            document.getElementById('btnEstudiante').classList.remove('active');
+            document.getElementById('btnDocente').classList.remove('active');
+            
+            // Ocultar mensaje de error si estaba visible
+            document.getElementById("mensajeError").style.display = "none";
+            
+            if (rol === 'estudiante') {
+                document.getElementById('correo').value = 'estudiante@correo.com';
+                document.getElementById('password').value = 'estudiante';
+                document.getElementById('btnEstudiante').classList.add('active'); // Pinta el botón de azul
+            } else if (rol === 'docente') {
+                document.getElementById('correo').value = 'docente@correo.com';
+                document.getElementById('password').value = 'docente';
+                document.getElementById('btnDocente').classList.add('active'); // Pinta el botón de azul
+            }
+        }
+
+        // FUNCIÓN PARA VALIDAR E INGRESAR AL SISTEMA
+        function entrar() {
+            let correo = document.getElementById("correo").value;
+            let pass = document.getElementById("password").value;
+            let msjError = document.getElementById("mensajeError");
+
+            // 1. Validar que los campos no estén vacíos
+            if(correo === "" || pass === "") {
+                msjError.innerText = "Por favor, complete todos los campos.";
+                msjError.style.display = "block";
+                return; // Detiene la ejecución
+            }
+
+            // 2. Validar credenciales de Estudiante
+            if (correo === "estudiante@correo.com" && pass === "estudiante") {
+                // Redirigir a la vista de estudiante
+                window.location.href = "estudiante.html";
+            } 
+            // 3. Validar credenciales de Docente
+            else if (correo === "docente@correo.com" && pass === "docente") {
+                // Redirigir a la vista del docente
+                window.location.href = "docente.html";
+            } 
+            // 4. Si escriben algo distinto a los usuarios de prueba
+            else {
+                msjError.innerText = "Usuario no encontrado. Verifique sus credenciales.";
+                msjError.style.display = "block";
+            }
+        }
+    </script>
+
+</body>
+</html>
