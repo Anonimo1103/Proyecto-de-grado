@@ -12,14 +12,13 @@
         header { background: linear-gradient(90deg, #0d6efd, #084298); color: white; text-align: center; padding: 30px; }
         
         /* CONTENEDOR Y TARJETAS */
-        .container { width: 90%; max-width: 1100px; margin: auto; padding: 25px; }
-        .card { background: white; padding: 25px; margin-bottom: 25px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,.1); }
-        h2 { color: #0d6efd; border-bottom: 2px solid #eef3f8; padding-bottom: 10px; }
+        .container { width: 90%; max-width: 1100px; margin: auto; padding: 25px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,.1); }
+        .full-width { grid-column: 1 / -1; } /* Para que ocupe todo el ancho */
+        h2 { color: #0d6efd; border-bottom: 2px solid #eef3f8; padding-bottom: 10px; margin-top: 0;}
         
-        /* CAMPOS */
-        input, select, textarea { width: 100%; padding: 12px; margin: 8px 0 15px; border: 1px solid #ccc; border-radius: 8px; font-size: 15px; }
-        
-        /* BOTONES */
+        /* CAMPOS Y BOTONES */
+        input, select, textarea { width: 100%; padding: 12px; margin: 8px 0 15px; border: 1px solid #ccc; border-radius: 8px; font-size: 14px; }
         button { width: auto; padding: 10px 15px; background: #0d6efd; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; margin-right: 5px; }
         button:hover { background: #084298; }
         .btn-completar { background: #198754; }
@@ -31,41 +30,49 @@
         /* TABLA */
         table { width: 100%; border-collapse: collapse; margin-top: 15px; }
         th { background: #0d6efd; color: white; padding: 12px; text-align: left; }
-        td { border: 1px solid #ddd; padding: 12px; }
+        td { border: 1px solid #ddd; padding: 12px; font-size: 14px;}
         tr:hover { background: #f5f9ff; }
         
         /* ESTADOS */
         .pendiente { color: #dc3545; font-weight: bold; }
         .completada { color: #198754; font-weight: bold; }
         small { color: #666; }
-        
-        /* BARRA DE PROGRESO */
         progress { width: 100%; height: 25px; accent-color: #198754; border-radius: 5px; }
+
+        /* CALENDARIO CSS */
+        .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .calendar-header button { background: #6c757d; padding: 5px 15px; font-size: 18px;}
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; text-align: center; }
+        .day-name { font-weight: bold; background: #0d6efd; color: white; padding: 8px; border-radius: 5px; font-size: 14px;}
+        .day { padding: 15px 5px; background: #f8f9fa; border-radius: 5px; border: 1px solid #ddd; min-height: 60px; display: flex; flex-direction: column; align-items: center; font-size: 14px;}
+        .day.empty { background: transparent; border: none; }
+        .day.today { background: #cfe2ff; border: 2px solid #0d6efd; font-weight: bold; }
+        .day.has-task { background: #d1e7dd; border-color: #198754; font-weight: bold;}
+        .task-dot { height: 8px; width: 8px; background-color: #dc3545; border-radius: 50%; margin-top: 5px; }
         
         /* FOOTER */
         footer { background: #212529; color: white; text-align: center; padding: 15px; margin-top: 20px; }
         
-        /* CELULARES */
-        @media(max-width: 600px) { table { font-size: 12px; } .container { width: 95%; padding: 10px; } }
+        @media(max-width: 768px) { .container { grid-template-columns: 1fr; width: 95%; padding: 10px; } }
     </style>
 </head>
 <body>
 
     <header>
         <h1>🎓 Panel de Control Estudiantil</h1>
-        <p>Bienvenido, Andres Felipe Morales Vega</p>
+        <p>¡Bienvenido, <strong>estudiante@correo.com</strong>!</p>
     </header>
 
     <div class="container">
 
         <!-- ANALÍTICA DEL APRENDIZAJE -->
-        <div class="card">
+        <div class="card full-width">
             <h2>📊 Mi Rendimiento Académico</h2>
-            <p>Porcentaje de tareas completadas:</p>
+            <p>Progreso de tareas completadas:</p>
             <progress id="barraProgreso" value="0" max="100"></progress>
-            <p style="text-align: right;"><strong id="porcentajeTexto">0%</strong></p>
+            <p style="text-align: right; margin-top: 5px;"><strong id="porcentajeTexto">0%</strong></p>
             <p>
-                Tareas Totales: <strong id="totalTareas">0</strong> | 
+                Total Asignadas: <strong id="totalTareas">0</strong> | 
                 Completadas: <strong id="tareasCompletadas" class="completada">0</strong> | 
                 Pendientes: <strong id="tareasPendientes" class="pendiente">0</strong>
             </p>
@@ -73,7 +80,7 @@
 
         <!-- FORMULARIO DE INGRESO -->
         <div class="card">
-            <h2>➕ Planificar Nueva Tarea</h2>
+            <h2>➕ Planificar Actividad</h2>
             <label>Nombre de la tarea</label>
             <input id="nombre" type="text" placeholder="Ejemplo: Ensayo de bases de datos">
 
@@ -89,14 +96,27 @@
             <input id="fecha" type="date">
 
             <label>Descripción</label>
-            <textarea id="descripcion" rows="3" placeholder="Detalles o instrucciones de la actividad"></textarea>
+            <textarea id="descripcion" rows="3" placeholder="Instrucciones breves"></textarea>
 
-            <button onclick="agregarActividad()" style="width: 100%;">Registrar Tarea</button>
+            <button onclick="agregarActividad()" style="width: 100%;">Agendar Tarea</button>
+        </div>
+
+        <!-- CALENDARIO INTERACTIVO -->
+        <div class="card">
+            <h2>📅 Calendario de Entregas</h2>
+            <div class="calendar-header">
+                <button onclick="cambiarMes(-1)">&#10094;</button>
+                <h3 id="mesAnioTexto" style="margin: 0; color: #333;"></h3>
+                <button onclick="cambiarMes(1)">&#10095;</button>
+            </div>
+            <div class="calendar-grid" id="calendarioGrid">
+                <!-- Se inyecta por JS -->
+            </div>
         </div>
 
         <!-- TABLA DE GESTIÓN -->
-        <div class="card">
-            <h2>📝 Mis Actividades</h2>
+        <div class="card full-width">
+            <h2>📝 Mis Actividades Registradas</h2>
             <table id="tablaActividades">
                 <thead>
                     <tr>
@@ -108,15 +128,16 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Las tareas se agregarán aquí desde JavaScript -->
+                    <!-- JS inyecta las filas aquí -->
                 </tbody>
             </table>
         </div>
 
-        <a href="login.html" style="text-decoration: none;">
-            <button class="btn-volver">← Cerrar Sesión</button>
-        </a>
-
+        <div class="full-width">
+            <a href="index.html" style="text-decoration: none;">
+                <button class="btn-volver">← Cerrar Sesión</button>
+            </a>
+        </div>
     </div>
 
     <footer>
@@ -124,7 +145,11 @@
     </footer>
 
     <script>
-        // Función principal para agregar una tarea a la tabla
+        // Memoria central del sistema (Arreglo de tareas)
+        let tareas = [];
+        let fechaActual = new Date();
+
+        // 1. FUNCIÓN PARA AGREGAR TAREAS
         function agregarActividad() {
             let nombre = document.getElementById("nombre").value;
             let asignatura = document.getElementById("asignatura").value;
@@ -136,85 +161,140 @@
                 return;
             }
 
-            let tbody = document.querySelector("#tablaActividades tbody");
-            let fila = tbody.insertRow();
+            // Guardar tarea con un ID único
+            let idUnico = Date.now();
+            tareas.push({ id: idUnico, nombre: nombre, asignatura: asignatura, fecha: fecha, descripcion: descripcion, estado: 'Pendiente' });
 
-            // Insertar celdas con la información
-            fila.innerHTML = `
-                <td>
-                    <strong>${nombre}</strong><br>
-                    <small>${descripcion}</small>
-                </td>
-                <td>${asignatura}</td>
-                <td>${fecha}</td>
-                <td class="pendiente estado-texto">Pendiente</td>
-                <td>
-                    <button class="btn-completar" onclick="marcarCompletada(this)">✔</button>
-                    <button class="btn-eliminar" onclick="eliminarActividad(this)">🗑</button>
-                </td>
-            `;
-
-            limpiarFormulario();
-            actualizarMetricas();
-        }
-
-        // Función para cambiar el estado de la tarea
-        function marcarCompletada(boton) {
-            let fila = boton.parentNode.parentNode;
-            let celdaEstado = fila.querySelector(".estado-texto");
-            
-            // Cambiar texto y color
-            celdaEstado.innerHTML = "Completada";
-            celdaEstado.className = "completada estado-texto";
-            
-            // Ocultar el botón de completar para que no se presione dos veces
-            boton.style.display = "none";
-            
-            actualizarMetricas();
-        }
-
-        // Función para eliminar la tarea de la tabla
-        function eliminarActividad(boton) {
-            let fila = boton.parentNode.parentNode;
-            fila.remove();
-            actualizarMetricas();
-        }
-
-        // Función para limpiar los campos del formulario
-        function limpiarFormulario() {
             document.getElementById("nombre").value = "";
             document.getElementById("fecha").value = "";
             document.getElementById("descripcion").value = "";
+
+            actualizarTodoElSistema();
         }
 
-        // Función para calcular la analítica de aprendizaje
-        function actualizarMetricas() {
+        // 2. FUNCIÓN PARA MARCAR COMO COMPLETADA
+        function marcarCompletada(id) {
+            let tareaBuscada = tareas.find(t => t.id === id);
+            if(tareaBuscada) {
+                tareaBuscada.estado = 'Completada';
+            }
+            actualizarTodoElSistema();
+        }
+
+        // 3. FUNCIÓN PARA ELIMINAR TAREA
+        function eliminarActividad(id) {
+            tareas = tareas.filter(t => t.id !== id);
+            actualizarTodoElSistema();
+        }
+
+        // 4. FUNCIÓN CENTRAL QUE ACTUALIZA TABLA Y MÉTRICAS
+        function actualizarTodoElSistema() {
             let tbody = document.querySelector("#tablaActividades tbody");
-            let total = tbody.rows.length;
+            tbody.innerHTML = ""; // Limpiar tabla
             
             let completadas = 0;
-            let estados = tbody.querySelectorAll(".estado-texto");
-            
-            estados.forEach(estado => {
-                if(estado.innerText === "Completada") {
-                    completadas++;
-                }
+
+            tareas.forEach(tarea => {
+                if(tarea.estado === 'Completada') completadas++;
+
+                let fila = tbody.insertRow();
+                fila.innerHTML = `
+                    <td><strong>${tarea.nombre}</strong><br><small>${tarea.descripcion}</small></td>
+                    <td>${tarea.asignatura}</td>
+                    <td>${tarea.fecha}</td>
+                    <td class="${tarea.estado === 'Pendiente' ? 'pendiente' : 'completada'}">${tarea.estado}</td>
+                    <td>
+                        ${tarea.estado === 'Pendiente' ? `<button class="btn-completar" onclick="marcarCompletada(${tarea.id})">✔</button>` : ''}
+                        <button class="btn-eliminar" onclick="eliminarActividad(${tarea.id})">🗑</button>
+                    </td>
+                `;
             });
 
+            // Actualizar métricas visuales
+            let total = tareas.length;
             let pendientes = total - completadas;
-            
-            // Evitar división por cero
             let porcentaje = total === 0 ? 0 : Math.round((completadas / total) * 100);
 
-            // Actualizar la interfaz HTML
             document.getElementById("totalTareas").innerText = total;
             document.getElementById("tareasCompletadas").innerText = completadas;
             document.getElementById("tareasPendientes").innerText = pendientes;
-            
-            // Actualizar barra de progreso
             document.getElementById("barraProgreso").value = porcentaje;
             document.getElementById("porcentajeTexto").innerText = porcentaje + "%";
+
+            // Refrescar calendario para que aparezcan los puntos de entrega
+            renderizarCalendario();
         }
+
+        // 5. FUNCIONES DEL CALENDARIO
+        function renderizarCalendario() {
+            const grid = document.getElementById("calendarioGrid");
+            grid.innerHTML = ""; // Limpiar calendario
+
+            const meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+            const anio = fechaActual.getFullYear();
+            const mes = fechaActual.getMonth();
+            
+            document.getElementById("mesAnioTexto").innerText = `${meses[mes]} ${anio}`;
+
+            // Días de la semana
+            const diasSemana = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
+            diasSemana.forEach(dia => {
+                let div = document.createElement("div");
+                div.className = "day-name";
+                div.innerText = dia;
+                grid.appendChild(div);
+            });
+
+            // Cálculos de fechas
+            const primerDiaMes = new Date(anio, mes, 1).getDay();
+            const totalDiasMes = new Date(anio, mes + 1, 0).getDate();
+            const hoy = new Date(); // Fecha real de hoy
+
+            // Rellenar espacios vacíos al inicio del mes
+            for (let i = 0; i < primerDiaMes; i++) {
+                let div = document.createElement("div");
+                div.className = "day empty";
+                grid.appendChild(div);
+            }
+
+            // Rellenar los días del mes
+            for (let i = 1; i <= totalDiasMes; i++) {
+                let div = document.createElement("div");
+                div.className = "day";
+                div.innerText = i;
+
+                // Destacar si es el día de hoy
+                if(i === hoy.getDate() && mes === hoy.getMonth() && anio === hoy.getFullYear()) {
+                    div.classList.add("today");
+                }
+
+                // Buscar si hay tareas en esta fecha
+                let mesString = (mes + 1).toString().padStart(2, '0');
+                let diaString = i.toString().padStart(2, '0');
+                let fechaFormateada = `${anio}-${mesString}-${diaString}`; // Formato: YYYY-MM-DD
+
+                let tieneTarea = tareas.some(t => t.fecha === fechaFormateada);
+                
+                if(tieneTarea) {
+                    div.classList.add("has-task");
+                    let punto = document.createElement("div");
+                    punto.className = "task-dot";
+                    div.appendChild(punto);
+                }
+
+                grid.appendChild(div);
+            }
+        }
+
+        // Navegar entre meses
+        function cambiarMes(direccion) {
+            fechaActual.setMonth(fechaActual.getMonth() + direccion);
+            renderizarCalendario();
+        }
+
+        // Iniciar el calendario al abrir la página
+        renderizarCalendario();
+
     </script>
 </body>
 </html>
