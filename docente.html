@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel Docente - Gestión Académica</title>
+    <title>Panel Docente Pro - Gestión Académica</title>
     <style>
         * { box-sizing: border-box; }
         body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: #eef3f8; }
@@ -12,17 +12,20 @@
         header { background: linear-gradient(90deg, #0d6efd, #084298); color: white; text-align: center; padding: 30px; }
         
         /* CONTENEDOR Y TARJETAS */
-        .container { width: 90%; max-width: 1100px; margin: auto; padding: 25px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .container { width: 90%; max-width: 1200px; margin: auto; padding: 25px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         .card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,.1); }
         .full-width { grid-column: 1 / -1; }
         h2 { color: #0d6efd; border-bottom: 2px solid #eef3f8; padding-bottom: 10px; margin-top: 0;}
         
         /* CAMPOS Y BOTONES */
-        select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 8px; font-size: 14px; margin-bottom: 15px; }
-        button { width: auto; padding: 8px 12px; border: none; border-radius: 8px; cursor: pointer; font-size: 13px; color: white; font-weight: bold; }
+        label { font-size: 14px; font-weight: bold; color: #333; display: block; margin-bottom: 5px; }
+        select, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 8px; font-size: 14px; margin-bottom: 15px; }
+        button { width: auto; padding: 10px 15px; border: none; border-radius: 8px; cursor: pointer; font-size: 13px; color: white; font-weight: bold; transition: 0.2s; }
         .btn-notificar { background: #0d6efd; }
         .btn-notificar:hover { background: #084298; }
-        .btn-volver { background: #6c757d; display: block; width: 100%; text-align: center; margin-top: 20px; padding: 12px; font-size: 15px;}
+        .btn-colectivo { background: #dc3545; width: 100%; padding: 12px; font-size: 14px; }
+        .btn-colectivo:hover { background: #a71d2a; }
+        .btn-volver { background: #6c757d; display: block; width: 100%; text-align: center; padding: 12px; font-size: 15px;}
         
         /* TABLA */
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
@@ -30,8 +33,8 @@
         td { border: 1px solid #ddd; padding: 12px; font-size: 14px; vertical-align: middle; }
         tr:hover { background: #f5f9ff; }
         
-        /* SEMÁFORO ESTADOS (MÉTRICAS) */
-        .badge { padding: 5px 10px; border-radius: 20px; color: white; font-size: 12px; font-weight: bold; text-align: center; display: inline-block; width: 110px;}
+        /* SEMÁFORO BADGES */
+        .badge { padding: 6px 12px; border-radius: 20px; color: white; font-size: 11px; font-weight: bold; text-align: center; display: inline-block; width: 115px;}
         .bg-verde { background-color: #198754; }
         .bg-amarillo { background-color: #ffc107; color: #333; }
         .bg-rojo { background-color: #dc3545; }
@@ -39,79 +42,92 @@
         /* DASHBOARD STATS */
         .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; text-align: center; margin-top: 15px;}
         .stat-box { padding: 15px; border-radius: 10px; background: #f8f9fa; border: 1px solid #ddd; }
-        .stat-number { font-size: 28px; font-weight: bold; margin: 5px 0; }
-        .stat-label { font-size: 13px; color: #666; }
+        .stat-number { font-size: 32px; font-weight: bold; margin: 5px 0; }
+        .stat-label { font-size: 13px; color: #666; font-weight: 500; }
         .riesgo-text { color: #dc3545; }
         
-        /* BARRA DE PROGRESO GLOBAL */
-        progress { width: 100%; height: 20px; accent-color: #0d6efd; border-radius: 5px; margin-top: 10px;}
+        progress { width: 100%; height: 18px; accent-color: #0d6efd; border-radius: 5px; margin-top: 8px;}
         
         footer { background: #212529; color: white; text-align: center; padding: 15px; margin-top: 20px; }
-        @media(max-width: 768px) { .container { grid-template-columns: 1fr; width: 95%; padding: 10px; } .stats-grid { grid-template-columns: 1fr; } }
+        @media(max-width: 768px) { .container { grid-template-columns: 1fr; } .stats-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>👨‍🏫 Panel de Control Docente</h1>
-        <p>Monitorización de la Gestión de Tareas Académicas</p>
+        <h1>👨‍🏫 Panel de Control Docente (Módulo Avanzado)</h1>
+        <p>Ecosistema de Analítica de Aprendizaje Bajo Modelo Ecológico</p>
     </header>
 
     <div class="container">
-        <!-- RESUMEN EJECUTIVO (DASHBOARD) -->
+        
+        <!-- SELECTOR DE CURSO / FILTRO DE ESTADÍSTICA CRUCIAL -->
+        <div class="card full-width" style="background: #e2ecf8; border: 1px solid #b6d4fe;">
+            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px;">
+                <div style="flex: 1; min-width: 280px;">
+                    <label for="selectorCurso">📊 Seleccionar Asignatura para Diagnóstico:</label>
+                    <select id="selectorCurso" onchange="cargarMetricasPorCurso()" style="margin-bottom: 0;">
+                        <option value="ingenieria_software">Ingeniería de Software</option>
+                        <option value="bases_datos">Bases de Datos</option>
+                        <option value="estructuras_datos">Estructuras de Datos</option>
+                    </select>
+                </div>
+                <div style="text-align: right;">
+                    <span style="font-size: 13px; color: #555; font-weight: bold;">Ecosistema de datos: Operaciones de Interfaz en Tiempo Real</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- DASHBOARD DE ANALÍTICA DINÁMICA -->
         <div class="card full-width">
-            <h2>📈 Resumen de Rendimiento Estudiantil</h2>
-            <p style="font-size: 14px; color: #555; margin-top: -5px;">Análisis y diagnóstico del curso bajo modelo ecológico.</p>
-            
+            <h2>📈 Indicadores del Modelo Ecológico Operativo</h2>
             <div class="stats-grid">
                 <div class="stat-box">
-                    <div class="stat-label">Promedio del Grupo</div>
+                    <div class="stat-label">Promedio de Avance del Curso</div>
                     <div class="stat-number" id="promedioGrupo">0%</div>
                     <progress id="barraGrupo" value="0" max="100"></progress>
                 </div>
                 <div class="stat-box">
-                    <div class="stat-label">Estudiantes al Día</div>
+                    <div class="stat-label">Estudiantes Optimizados (Al Día)</div>
                     <div class="stat-number" style="color: #198754;" id="totalAlDia">0</div>
                 </div>
                 <div class="stat-box" style="border-color: #f8d7da; background: #fff5f5;">
-                    <div class="stat-label riesgo-text">Riesgo Crítico (>3 pendientes)</div>
+                    <div class="stat-label riesgo-text">Estudiantes en Riesgo Crítico</div>
                     <div class="stat-number riesgo-text" id="totalRiesgo">0</div>
                 </div>
             </div>
         </div>
 
-        <!-- TABLA DE CONTROL -->
+        <!-- TABLA DE CONTROL OPERATIVO -->
         <div class="card full-width">
-            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
-                <h2>📋 Listado de Seguimiento por Estudiante</h2>
-                <div style="width: 250px;">
-                    <select id="filtroEstado" onchange="renderizarTabla()">
-                        <option value="todos">Mostrar Todos</option>
-                        <option value="critico">Solo Riesgo Crítico</option>
-                        <option value="moderado">Solo Riesgo Moderado</option>
-                    </select>
-                </div>
-            </div>
-
+            <h2>📋 Matriz de Control y Seguimiento Integral</h2>
             <table id="tablaEstudiantes">
                 <thead>
                     <tr>
                         <th>Nombre Completo del Estudiante</th>
-                        <th>Tareas Pendientes</th>
-                        <th>Avance Promedio</th>
+                        <th>Tareas Registradas / Pendientes</th>
+                        <th>Avance de Objetivos</th>
                         <th>Estado Analítico</th>
                         <th>Acción Rápida</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- JS inyecta los datos aquí -->
+                    <!-- Inyección dinámica desde JS -->
                 </tbody>
             </table>
         </div>
 
+        <!-- MÓDULO DE ALERTA TEMPRANA COLECTIVA -->
+        <div class="card full-width">
+            <h2>🚨 Plan de Contingencia y Mensajería Colectiva</h2>
+            <label>Redactar mensaje de alerta para estudiantes rezagados:</label>
+            <textarea id="mensajeColectivo" rows="3" placeholder="Ejemplo: Estimado estudiante, el sistema ecológico detecta que presenta actividades con retraso o bajo porcentaje de avance. Por favor, ingrese a la plataforma y actualice su progreso..."></textarea>
+            <button class="btn-colectivo" onclick="enviarAlertaMasiva()">⚡ Enviar Notificación de Emergencia a Usuarios en Riesgo Crítico</button>
+        </div>
+
         <div class="full-width">
             <a href="index.html" style="text-decoration: none;">
-                <button class="btn-volver">← Cerrar Sesión</button>
+                <button class="btn-volver">← Cerrar Sesión de Monitoreo</button>
             </a>
         </div>
     </div>
@@ -121,17 +137,37 @@
     </footer>
 
     <script>
-        // DATOS DE PRUEBA (Mock Data estructurada con nombres completos)
-        const estudiantes = [
-            { id: 1, nombre: "Diego Alejandro Mosquera Cely", pendientes: 0, progreso: 95 },
-            { id: 2, nombre: "Andrés Felipe Morales Vega", pendientes: 2, progreso: 65 },
-            { id: 3, nombre: "Oscar Julián Corredor Morantes", pendientes: 5, progreso: 15 }
-        ];
+        // BASE DE DATOS DE PRUEBA MAPEADA POR ASIGNATURAS (Modelo Ecológico Puro)
+        const baseDatosCursos = {
+            ingenieria_software: [
+                { nombre: "Diego Alejandro Mosquera Cely", pendientes: 0, progreso: 100 },
+                { nombre: "Andrés Felipe Morales Vega", pendientes: 1, progreso: 80 },
+                { nombre: "Oscar Julián Corredor Morantes", pendientes: 2, progreso: 70 },
+                { nombre: "Carlos Eduardo Mendoza Sastoque", pendientes: 0, progreso: 90 },
+                { nombre: "Laura Valentina Camargo Patarroyo", pendientes: 4, progreso: 20 } // Inventado en riesgo
+            ],
+            bases_datos: [
+                { nombre: "Diego Alejandro Mosquera Cely", pendientes: 1, progreso: 75 },
+                { nombre: "Andrés Felipe Morales Vega", pendientes: 0, progreso: 100 },
+                { nombre: "Oscar Julián Corredor Morantes", pendientes: 1, progreso: 85 },
+                { nombre: "Carlos Eduardo Mendoza Sastoque", pendientes: 5, progreso: 10 }, // Inventado en riesgo
+                { nombre: "Laura Valentina Camargo Patarroyo", pendientes: 2, progreso: 60 }
+            ],
+            estructuras_datos: [
+                { nombre: "Diego Alejandro Mosquera Cely", pendientes: 2, progreso: 50 },
+                { nombre: "Andrés Felipe Morales Vega", pendientes: 1, progreso: 70 },
+                { nombre: "Oscar Julián Corredor Morantes", pendientes: 4, progreso: 15 }, // Oscar en riesgo moderado/crítico temporal en esta materia
+                { nombre: "Carlos Eduardo Mendoza Sastoque", pendientes: 1, progreso: 80 },
+                { nombre: "Laura Valentina Camargo Patarroyo", pendientes: 0, progreso: 95 }
+            ]
+        };
 
-        // FUNCIÓN PRINCIPAL DE RENDERIZADO
-        function renderizarTabla() {
+        // FUNCIÓN DINÁMICA QUE CALCULA LAS ESTADÍSTICAS POR CURSO SELECCIONADO
+        function cargarMetricasPorCurso() {
+            const cursoSeleccionado = document.getElementById("selectorCurso").value;
+            const estudiantes = baseDatosCursos[cursoSeleccionado];
+            
             const tbody = document.querySelector("#tablaEstudiantes tbody");
-            const filtro = document.getElementById("filtroEstado").value;
             tbody.innerHTML = ""; 
 
             let sumatoriaProgreso = 0;
@@ -139,15 +175,15 @@
             let enRiesgo = 0;
 
             estudiantes.forEach(est => {
-                // Cálculo de Estado y Clases CSS
                 let estadoTexto = "";
                 let claseBadge = "";
                 
-                if (est.pendientes === 0 && est.progreso >= 80) {
+                // Algoritmo de clasificación ecológica
+                if (est.pendientes === 0 && est.progreso >= 85) {
                     estadoTexto = "Al Día";
                     claseBadge = "bg-verde";
                     alDia++;
-                } else if (est.pendientes > 3 || est.progreso < 40) {
+                } else if (est.pendientes >= 3 || est.progreso < 30) {
                     estadoTexto = "Riesgo Crítico";
                     claseBadge = "bg-rojo";
                     enRiesgo++;
@@ -156,17 +192,12 @@
                     claseBadge = "bg-amarillo";
                 }
 
-                // Lógica del filtro del select
-                if (filtro === "critico" && estadoTexto !== "Riesgo Crítico") return;
-                if (filtro === "moderado" && estadoTexto !== "Riesgo Moderado") return;
-
                 sumatoriaProgreso += est.progreso;
 
-                // Creación de la fila
                 let fila = tbody.insertRow();
                 fila.innerHTML = `
                     <td style="font-weight: 500;">${est.nombre}</td>
-                    <td style="text-align: center;"><strong>${est.pendientes}</strong></td>
+                    <td style="text-align: center;"><strong>${est.pendientes} pendientes</strong></td>
                     <td>
                         <div style="display: flex; align-items: center; gap: 10px;">
                             <progress value="${est.progreso}" max="100" style="width: 70%; margin:0; height: 12px;"></progress>
@@ -175,26 +206,43 @@
                     </td>
                     <td><span class="badge ${claseBadge}">${estadoTexto}</span></td>
                     <td>
-                        <button class="btn-notificar" onclick="alert('Se ha enviado un correo institucional a ${est.nombre} con recordatorio de sus actividades.')">
-                            ✉️ Notificar
+                        <button class="btn-notificar" onclick="alert('Notificación Ecológica Individual: Se despachó una alerta al correo institucional de ${est.nombre} debido a sus métricas actuales.')">
+                            ⚠️ Alerta
                         </button>
                     </td>
                 `;
             });
 
-            // ACTUALIZACIÓN DEL DASHBOARD
-            // Solo actualiza las métricas globales si no hay filtros activos para no confundir al docente
-            if(filtro === "todos") {
-                let promedio = Math.round(sumatoriaProgreso / estudiantes.length);
-                document.getElementById("promedioGrupo").innerText = promedio + "%";
-                document.getElementById("barraGrupo").value = promedio;
-                document.getElementById("totalAlDia").innerText = alDia;
-                document.getElementById("totalRiesgo").innerText = enRiesgo;
+            // Recalcular métricas generales del dashboard por curso
+            let promedio = Math.round(sumatoriaProgreso / estudiantes.length);
+            document.getElementById("promedioGrupo").innerText = promedio + "%";
+            document.getElementById("barraGrupo").value = promedio;
+            document.getElementById("totalAlDia").innerText = alDia;
+            document.getElementById("totalRiesgo").innerText = enRiesgo;
+        }
+
+        // FUNCIÓN DE ALERTA COLECTIVA MASIVA
+        function enviarAlertaMasiva() {
+            const cursoSeleccionado = document.getElementById("selectorCurso").value;
+            const estudiantes = baseDatosCursos[cursoSeleccionado];
+            let contados = 0;
+
+            estudiantes.forEach(est => {
+                if (est.pendientes >= 3 || est.progreso < 30) {
+                    contados++;
+                }
+            });
+
+            if(contados === 0) {
+                alert("Excelente ecosistema operativo: No se detectan estudiantes bajo parámetros de Riesgo Crítico en esta asignatura.");
+            } else {
+                alert(`Acción Colectiva Ejecutada: Se han enviado ${contados} alertas de emergencia a los estudiantes en estado crítico de esta asignatura.`);
+                document.getElementById("mensajeColectivo").value = "";
             }
         }
 
-        // Iniciar tabla al cargar la página
-        renderizarTabla();
+        // Carga automática inicial
+        cargarMetricasPorCurso();
     </script>
 </body>
 </html>
