@@ -163,7 +163,46 @@
     </footer>
 
     <script>
-        let tareas = [];
+        // Función auxiliar para obtener fechas relativas y que el prototipo siempre funcione
+        function obtenerFechaRelativa(dias) {
+            let d = new Date();
+            d.setDate(d.getDate() + dias);
+            let mes = (d.getMonth() + 1).toString().padStart(2, '0');
+            let dia = d.getDate().toString().padStart(2, '0');
+            return `${d.getFullYear()}-${mes}-${dia}`;
+        }
+
+        // TAREAS PRECARGADAS DINÁMICAMENTE
+        let tareas = [
+            { 
+                id: 1, 
+                nombre: "Script de creación de tablas", 
+                asignatura: "Bases de Datos", 
+                fecha: obtenerFechaRelativa(2), // 2 días = Semáforo Rojo
+                descripcion: "Diseñar el esquema relacional en SQL", 
+                porcentaje: 0, 
+                estado: 'Pendiente' 
+            },
+            { 
+                id: 2, 
+                nombre: "Documento de requerimientos", 
+                asignatura: "Ingeniería de Software", 
+                fecha: obtenerFechaRelativa(5), // 5 días = Semáforo Amarillo
+                descripcion: "Redactar historias de usuario", 
+                porcentaje: 50, 
+                estado: 'En Progreso' 
+            },
+            { 
+                id: 3, 
+                nombre: "Prototipo de Interfaz UI", 
+                asignatura: "Diseño Web", 
+                fecha: obtenerFechaRelativa(10), // 10 días = Semáforo Verde (Aunque esté al 100%)
+                descripcion: "Implementar HTML y CSS", 
+                porcentaje: 100, 
+                estado: 'Completada' 
+            }
+        ];
+        
         let fechaActual = new Date();
 
         function agregarActividad() {
@@ -178,7 +217,6 @@
             }
 
             let idUnico = Date.now();
-            // Nueva propiedad "porcentaje" inicializada en 0
             tareas.push({ id: idUnico, nombre: nombre, asignatura: asignatura, fecha: fecha, descripcion: descripcion, porcentaje: 0, estado: 'Pendiente' });
 
             document.getElementById("nombre").value = "";
@@ -188,13 +226,11 @@
             actualizarTodoElSistema();
         }
 
-        // Se ejecuta cada vez que el estudiante mueve el slider
         function cambiarPorcentaje(id, valor) {
             let tareaBuscada = tareas.find(t => t.id === id);
             if(tareaBuscada) {
                 tareaBuscada.porcentaje = parseInt(valor);
                 
-                // Actualizar estado basado en el porcentaje
                 if(tareaBuscada.porcentaje === 0) {
                     tareaBuscada.estado = 'Pendiente';
                 } else if(tareaBuscada.porcentaje === 100) {
@@ -281,7 +317,7 @@
             const primerDiaMes = new Date(anio, mes, 1).getDay();
             const totalDiasMes = new Date(anio, mes + 1, 0).getDate();
             const hoyReal = new Date(); 
-            hoyReal.setHours(0,0,0,0); // Limpiar horas para cálculo exacto
+            hoyReal.setHours(0,0,0,0); 
 
             for (let i = 0; i < primerDiaMes; i++) {
                 let div = document.createElement("div");
@@ -300,31 +336,24 @@
                 let mesString = (mes + 1).toString().padStart(2, '0');
                 let diaString = i.toString().padStart(2, '0');
                 let fechaCeldaTxt = `${anio}-${mesString}-${diaString}`;
-                let fechaCeldaDate = new Date(fechaCeldaTxt + 'T00:00:00'); // Tratar zona horaria
+                let fechaCeldaDate = new Date(fechaCeldaTxt + 'T00:00:00'); 
 
-                // Filtrar tareas que caen en este día
                 let tareasDelDia = tareas.filter(t => t.fecha === fechaCeldaTxt);
                 
                 if(tareasDelDia.length > 0) {
-                    // Contenedor para múltiples puntitos si hay más de una tarea
                     let dotContainer = document.createElement("div");
                     dotContainer.className = "dot-container";
-
-                    // Crear el Tooltip (Caja de texto al pasar el ratón)
                     let tooltipInfo = "";
                     
                     tareasDelDia.forEach(t => {
                         let dot = document.createElement("div");
                         dot.className = "task-dot";
                         
-                        // Color del punto según estado
                         if(t.estado === 'Pendiente') dot.classList.add("dot-pendiente");
                         else if(t.estado === 'En Progreso') dot.classList.add("dot-progreso");
                         else dot.classList.add("dot-completada");
                         
                         dotContainer.appendChild(dot);
-
-                        // Agregar info al tooltip
                         tooltipInfo += `<strong>${t.asignatura}</strong><br>${t.nombre} - <em>${t.estado} (${t.porcentaje}%)</em><br><br>`;
                     });
 
@@ -332,13 +361,10 @@
 
                     let tooltip = document.createElement("div");
                     tooltip.className = "tooltip";
-                    tooltip.innerHTML = tooltipInfo.slice(0, -8); // Quitar los últimos <br>
+                    tooltip.innerHTML = tooltipInfo.slice(0, -8); 
                     div.appendChild(tooltip);
 
-                    // LÓGICA DE SEMAFORIZACIÓN (Calculamos con la tarea que falte menos días y no esté completada)
                     let diasParaEntrega = (fechaCeldaDate.getTime() - hoyReal.getTime()) / (1000 * 3600 * 24);
-                    
-                    // Solo pintar el fondo si hay alguna tarea sin completar
                     let faltaTerminar = tareasDelDia.some(t => t.estado !== 'Completada');
                     
                     if (faltaTerminar) {
@@ -350,7 +376,6 @@
                             div.classList.add("semaforo-verde");
                         }
                     } else {
-                        // Si todas están al 100%, queda verde seguro.
                         div.classList.add("semaforo-verde");
                     }
                 }
@@ -364,7 +389,8 @@
             renderizarCalendario();
         }
 
-        renderizarCalendario();
+        // Inicializamos todo al cargar
+        actualizarTodoElSistema();
     </script>
 </body>
 </html>
