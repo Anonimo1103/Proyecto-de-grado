@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro - Gestión Académica</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: #eef3f8; }
+        .card { width: 400px; margin: 60px auto; background: white; padding: 35px 30px; border-radius: 15px; box-shadow: 0 8px 20px rgba(0,0,0,.15); }
+        h1 { text-align: center; color: #0d6efd; font-size: 22px; margin-bottom: 5px; }
+        .subtitulo { text-align: center; color: #666; font-size: 14px; margin-bottom: 25px; }
+        label { font-size: 13px; font-weight: bold; color: #333; display: block; margin-bottom: 4px; }
+        input, select { width: 100%; padding: 11px; margin-bottom: 16px; border: 1px solid #ccc; border-radius: 8px; font-size: 14px; transition: border-color 0.2s; }
+        input:focus, select:focus { outline: none; border-color: #0d6efd; }
+        .fortaleza-barra { height: 5px; border-radius: 5px; margin-top: -12px; margin-bottom: 16px; transition: 0.3s; background: #ddd; }
+        .fortaleza-texto { font-size: 11px; color: #888; margin-top: -14px; margin-bottom: 14px; }
+        .btn-registrar { width: 100%; padding: 12px; background: #0d6efd; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 15px; font-weight: bold; transition: background 0.3s; }
+        .btn-registrar:hover { background: #084298; }
+        .alerta-error { background: #f8d7da; color: #842029; padding: 10px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 15px; display: none; }
+        .alerta-ok { background: #d1e7dd; color: #0f5132; padding: 10px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 15px; display: none; }
+        .link-login { text-align: center; margin-top: 18px; font-size: 13px; color: #555; }
+        .link-login a { color: #0d6efd; text-decoration: none; font-weight: bold; }
+        .link-login a:hover { text-decoration: underline; }
+        @media(max-width: 450px) { .card { width: 95%; margin: 30px auto; } }
+    </style>
+</head>
+<body>
+<div class="card">
+    <h1>📚 Gestión Académica</h1>
+    <p class="subtitulo">Crea tu cuenta para comenzar</p>
+    <div class="alerta-error" id="error"></div>
+    <div class="alerta-ok" id="ok"></div>
+    <label>Nombre completo</label>
+    <input type="text" id="nombre" placeholder="Ej: María Juliana Bautista">
+    <label>Correo electrónico</label>
+    <input type="email" id="correo" placeholder="correo@ejemplo.com">
+    <label>Contraseña</label>
+    <input type="password" id="password" placeholder="Mínimo 6 caracteres" oninput="evaluarFortaleza(this.value)">
+    <div class="fortaleza-barra" id="barrFortaleza"></div>
+    <div class="fortaleza-texto" id="textoFortaleza"></div>
+    <label>Confirmar contraseña</label>
+    <input type="password" id="password2" placeholder="Repite tu contraseña">
+    <label>Rol</label>
+    <select id="rol">
+        <option value="estudiante">👨‍🎓 Estudiante</option>
+        <option value="docente">👨‍🏫 Docente</option>
+    </select>
+    <button class="btn-registrar" onclick="registrar()">Crear cuenta</button>
+    <div class="link-login">¿Ya tienes cuenta? <a href="index.html">Inicia sesión aquí</a></div>
+</div>
+<script>
+    function evaluarFortaleza(valor) {
+        const barra = document.getElementById('barrFortaleza');
+        const texto = document.getElementById('textoFortaleza');
+        if (valor.length === 0) { barra.style.background = '#ddd'; texto.innerText = ''; return; }
+        if (valor.length < 6) {
+            barra.style.background = '#dc3545'; barra.style.width = '30%';
+            texto.innerText = 'Contraseña débil'; texto.style.color = '#dc3545';
+        } else if (valor.length < 10 || !/[0-9]/.test(valor)) {
+            barra.style.background = '#ffc107'; barra.style.width = '65%';
+            texto.innerText = 'Contraseña moderada'; texto.style.color = '#856404';
+        } else {
+            barra.style.background = '#198754'; barra.style.width = '100%';
+            texto.innerText = 'Contraseña fuerte'; texto.style.color = '#0f5132';
+        }
+    }
+    function mostrarError(msg) { const el = document.getElementById('error'); el.innerText = msg; el.style.display = 'block'; document.getElementById('ok').style.display = 'none'; }
+    function mostrarOk(msg) { const el = document.getElementById('ok'); el.innerText = msg; el.style.display = 'block'; document.getElementById('error').style.display = 'none'; }
+    function registrar() {
+        const nombre  = document.getElementById('nombre').value.trim();
+        const correo  = document.getElementById('correo').value.trim().toLowerCase();
+        const pass    = document.getElementById('password').value;
+        const pass2   = document.getElementById('password2').value;
+        const rol     = document.getElementById('rol').value;
+        if (!nombre || !correo || !pass || !pass2) { mostrarError('Por favor completa todos los campos.'); return; }
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo)) { mostrarError('El correo no tiene un formato válido.'); return; }
+        if (pass.length < 6) { mostrarError('La contraseña debe tener al menos 6 caracteres.'); return; }
+        if (pass !== pass2) { mostrarError('Las contraseñas no coinciden.'); return; }
+        const usuarios = JSON.parse(localStorage.getItem('usuarios') || '[]');
+        if (usuarios.some(u => u.correo === correo)) { mostrarError('Este correo ya está registrado. Inicia sesión.'); return; }
+        usuarios.push({ nombre, correo, password: pass, rol });
+        localStorage.setItem('usuarios', JSON.stringify(usuarios));
+        mostrarOk('✅ Cuenta creada exitosamente. Redirigiendo al inicio de sesión...');
+        ['nombre','correo','password','password2'].forEach(id => document.getElementById(id).value = '');
+        setTimeout(() => { window.location.href = 'index.html?registro=ok'; }, 2000);
+    }
+</script>
+</body>
+</html>
